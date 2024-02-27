@@ -1,6 +1,7 @@
 import express from "express"
 import dotenv from "dotenv"
 import connectDB from "./db/index.js"
+import cookieParser from 'cookie-parser'
 
 dotenv.config({
     path: './.env'
@@ -23,3 +24,11 @@ connectDB()
 .catch((err) => {
     console.log("MONGO db connection failed !!", err);
 })
+
+
+app.use(express.json({limit: "16kb"}))
+app.use(cookieParser())
+
+import userRouter from './routes/user.route.js';
+
+app.use("/api/user", userRouter)
