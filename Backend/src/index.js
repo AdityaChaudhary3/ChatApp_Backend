@@ -30,5 +30,7 @@ app.use(express.json({limit: "16kb"}))
 app.use(cookieParser())
 
 import userRouter from './routes/user.route.js';
+import chatRouter from './routes/chat.route.js';
 
 app.use("/api/user", userRouter)
+app.use("/api/chat", chatRouter)

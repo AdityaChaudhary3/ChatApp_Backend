@@ -2,8 +2,7 @@ import { asyncHandler } from '../utils/asyncHandler.js';
 import { ApiError } from '../utils/ApiError.js';
 import {User} from "../models/user.model.js"
 import { ApiResponse } from "../utils/ApiResponse.js";
-import jwt from "jsonwebtoken"
-import mongoose from "mongoose";
+
 
 const generateAccessAndRefereshTokens = async(userId) =>{
     try {
@@ -29,14 +28,12 @@ const registerUser = asyncHandler(async (req,res) => {
     const {name, email, password} = req.body
     
     if (!name || !email || !password) {
-        res.status(400);
         throw new ApiError(400,"Please Enter all the Feilds");
     }
 
     const userExists = await User.findOne({ email });
 
     if (userExists) {
-        res.status(400);
         throw new ApiError(409,"User already exists");
     }
 
@@ -78,7 +75,7 @@ const loginUser = asyncHandler(async (req, res) => {
     const isPasswordValid = await user.isPasswordCorrect(password)
 
     if (!isPasswordValid) {
-    throw new ApiError(401, "Invalid user credentials")
+        throw new ApiError(401, "Invalid user credentials")
     }
 
    const {accessToken, refreshToken} = await generateAccessAndRefereshTokens(user._id)
