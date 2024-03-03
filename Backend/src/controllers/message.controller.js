@@ -10,9 +10,9 @@ const allMessages = asyncHandler(async (req, res) => {
         const messages = await Message.find({ chat: req.params.chatId })
           .populate("sender", "name pic email")
           .populate("chat");
-        res
+        return res
         .status(200)
-        .json(200, messages, "All message fetched.")
+        .json(new ApiResponse(200, messages, "All message fetched."))
     } catch (error) {
         throw new ApiError(404, "message not found.")
     }
@@ -35,8 +35,8 @@ const sendMessage = asyncHandler(async (req, res) => {
 
         let message = await Message.create(newMessage);
   
-        message = await message.populate("sender", "name pic").execPopulate();
-        message = await message.populate("chat").execPopulate();
+        message = await message.populate("sender", "name pic");
+        message = await message.populate("chat");
         message = await User.populate(message, {
             path: "chat.users",
             select: "name pic email",
@@ -44,9 +44,9 @@ const sendMessage = asyncHandler(async (req, res) => {
   
         await Chat.findByIdAndUpdate(req.body.chatId, { latestMessage: message });
   
-        res
+        return res
         .status(200)
-        .json(200, message, "message created.")
+        .json(new ApiResponse(200, message, "message created."))
     } catch (error) {
         throw new ApiError(400, "Error while creating the message.")
     }
