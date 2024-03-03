@@ -125,20 +125,18 @@ const renameGroup = asyncHandler(async (req, res) => {
     if (!updatedChat) {
         throw new ApiError(404,"Chat Not Found");
     } else {
-      res
+      return res
       .status(200)
-      .json(200, updatedChat, "Group Chat renamed.")
+      .json(new ApiResponse(200, updatedChat, "Group Chat renamed."))
     }
   });
 
 const removeFromGroup = asyncHandler(async (req, res) => {
     const { chatId, userId } = req.body;
   
-    // check if the requester is admin
-    const user = req.user._id
-    const chat = Chat.findById(chatId)
+    const chat = await Chat.findById(chatId)
 
-    if(chat.groupAdmin !== user){
+    if(chat.groupAdmin.toString() !== req?.user._id.toString()){
         throw new ApiError(400, "you are not group admin. so you can't done this action.")
     }
   
@@ -157,20 +155,19 @@ const removeFromGroup = asyncHandler(async (req, res) => {
     if (!removed) {
         throw new ApiError(404,"Chat Not Found");
     } else {
-        res
+        return res
         .status(200)
-        .json(200, removed, "user removed successfully")
+        .json(new ApiResponse(200, removed, "user removed successfully"))
     }
   });
   
 const addToGroup = asyncHandler(async (req, res) => {
     const { chatId, userId } = req.body;
   
-    // check if the requester is admin
-    const user = req.user._id
-    const chat = Chat.findById(chatId)
+    const chat = await Chat.findById(chatId)
+    console.log(chat)
 
-    if(chat.groupAdmin !== user){
+    if(chat.groupAdmin.toString() !== req?.user._id.toString()){
         throw new ApiError(400, "you are not group admin. so you can't done this action.")
     }
   
@@ -189,9 +186,9 @@ const addToGroup = asyncHandler(async (req, res) => {
     if (!added) {
         throw new ApiError(404,"Chat Not Found");
     } else {
-        res
+        return res
         .status(200)
-        .json(200, added, "user addesd successfully.")
+        .json(new ApiResponse(200, added, "user addesd successfully."))
     }
   });
 
